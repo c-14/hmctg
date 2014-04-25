@@ -1,6 +1,18 @@
 Haskell Markov Chain Text Generator [Fancy Name Required]
 ---------------------------------------------------------
-Repa 2d Array (A[i][j]) storing number of times word j came after word i.
-Row i = 0 is a "Null" character and represents the beginning of a sentence.
-Spelling counts, punktuation marks (;,.:) are not considered part of a word. (Should they be?) (In any case, periods will never be considered part of a word.)
 
+Basic Design:
+	Spelling counts
+	Punktuation marks (;,.:) are not considered part of a word. (Should they be?) (In any case, periods will never be considered part of a word.) --- haha maybe they will...
+	Option a: Markov chain always outputs n "sentence[s]" that are independent of each other (ie n string[s] terminated with a period) [Periods are not considered part of the word.]
+	Option b: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '\0') [Periods are considered part of the word.]
+	Option c: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '.') [Periods are not considered part of the word.]
+
+Persistent Database:
+	Repa 2d Array (A[i][j]) storing number of times word j came after word i.
+	Row i = 0 is a "Null" character and represents the beginning of a sentence.
+	Hashmap with key = i and value = word. (Can you easily write hashmaps to a file?) -- Can I use strings as indexes for the array?
+
+In memory Database:
+	Unboxed 2d Array (A[i][j]) storing the probability as a percentage that the next word after i is j.
+	Hashmap with key = i and value = word. (Can you easily write hashmaps to a file?) -- Can I use strings as indexes for the 2d array?
