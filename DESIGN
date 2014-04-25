@@ -6,13 +6,20 @@ Basic Design:
 	Punktuation marks (;,.:) are not considered part of a word. (Should they be?) (In any case, periods will never be considered part of a word.) --- haha maybe they will...
 	Option a: Markov chain always outputs n "sentence[s]" that are independent of each other (ie n string[s] terminated with a period) [Periods are not considered part of the word.]
 	Option b: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '\0') [Periods are considered part of the word.]
-	Option c: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '.') [Periods are not considered part of the word.]
+	Option c: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '.') [Periods are not considered part of the word.] **
 
 Persistent Database:
-	Repa 2d Array (A[i][j]) storing number of times word j came after word i.
-	Row i = 0 is a "Null" character and represents the beginning of a sentence.
-	Hashmap with key = i and value = word. (Can you easily write hashmaps to a file?) -- Can I use strings as indexes for the array?
+	Data.Map with key (String, String) and value v where (String, _) is source string i and (_, String) is possible destination string j and v is number of times j came after i
+	Row i = 0 is the empy string "" and represents the beginning of a sentence.
+	List of All stored strings.
+	Read from file using Parsec. Standard write.
 
 In memory Database:
-	Unboxed 2d Array (A[i][j]) storing the probability as a percentage that the next word after i is j.
-	Hashmap with key = i and value = word. (Can you easily write hashmaps to a file?) -- Can I use strings as indexes for the 2d array?
+	Data.Map like the one stored to file except that all the values are converted to percentages.
+	List of All stored strings.
+
+Executional Design:
+	Two separate binaries.
+	Binary 0: creates and updates persistent database[s]
+	Binary 1: Generates Markov Text Chains using an already existing persistent database
+	Eventually 3rd binary for manual viewing and editing of database.
