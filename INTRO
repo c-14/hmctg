@@ -1,0 +1,6 @@
+Haskell Markov Chain Text Generator [Fancy Name Required]
+---------------------------------------------------------
+Repa 2d Array (A[i][j]) storing number of times word j came after word i.
+Row i = 0 is a "Null" character and represents the beginning of a sentence.
+Spelling counts, punktuation marks (;,.:) are not considered part of a word. (Should they be?) (In any case, periods will never be considered part of a word.)
+
