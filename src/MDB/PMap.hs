@@ -3,6 +3,8 @@ module MDB.PMap
     , writeDB
     , createDB
     , updateDB
+    , Database
+    , Word
     ) where
 
 import qualified Data.Map.Strict as M
@@ -14,19 +16,20 @@ type Word = String
 type WordSet = S.Set Word
 type WordPair = (Word, Word)
 type WPMap = M.Map WordPair Count
+type Database = (WPMap, WordSet)
 
-writeDB :: FilePath -> WPMap -> WordSet -> IO ()
-writeDB path wpm ws = withFile path WriteMode (\handle -> do
+writeDB :: FilePath -> Database -> IO ()
+writeDB path (wpm,ws) = withFile path WriteMode (\handle -> do
                                               hPrint handle $ M.toList wpm
                                               hPrint handle $ S.toList ws)
 
-readDB :: FilePath -> IO (WPMap, WordSet)
+readDB :: FilePath -> IO Database
 readDB path = withFile path ReadMode (\handle -> do
                                      wpm <- hGetLine handle
                                      ws <- hGetLine handle
                                      return (M.fromList $ read wpm, S.fromList $ read ws))
 
-createDB :: FilePath -> IO (WPMap, WordSet)
+createDB :: FilePath -> IO Database
 createDB path = withFile path WriteMode (\handle -> do
                                    hPrint handle $ M.toList wpp
                                    hPrint handle $ S.toList w
@@ -34,10 +37,10 @@ createDB path = withFile path WriteMode (\handle -> do
         where wpp = M.singleton ("^","$") 1
               w   = S.fromList ["^","$"]
 
-updateDB :: WordPair -> WPMap -> WordSet -> (WPMap, WordSet)
-updateDB wp wpm ws = (M.alter wpMapInsert wp wpm, wsInsert wp ws)
+updateDB :: WordPair -> Database -> Database
+updateDB wp (wpm,ws) = (M.alter wpMapInsert wp wpm, wsInsert wp ws)
 
-wpMapInsert :: Maybe Int -> Maybe Int
+wpMapInsert :: Maybe Count -> Maybe Count
 wpMapInsert a = case a of
                     Nothing -> Just 1
                     Just b -> Just (b + 1)
