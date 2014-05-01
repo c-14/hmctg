@@ -1,15 +1,20 @@
 module MDB.PMap
-    ( readDB
+    ( checkDB
     , writeDB
     , createDB
     , updateDB
+    , Count
     , Database
     , Word
+    , WordPair
+    , WordSet
+    , WPMap
     ) where
 
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 import System.IO
+import System.Directory
 
 type Count = Int
 type Word = String
@@ -28,6 +33,13 @@ readDB path = withFile path ReadMode (\handle -> do
                                      wpm <- hGetLine handle
                                      ws <- hGetLine handle
                                      return (M.fromList $ read wpm, S.fromList $ read ws))
+
+checkDB :: FilePath -> IO Database
+checkDB path = do
+        dbExists <- doesFileExist path
+        if dbExists
+            then readDB path
+            else createDB path
 
 createDB :: FilePath -> IO Database
 createDB path = withFile path WriteMode (\handle -> do
