@@ -25,14 +25,14 @@ type Database = (WPMap, WordSet)
 
 writeDB :: FilePath -> Database -> IO ()
 writeDB path (wpm,ws) = withFile path WriteMode (\handle -> do
-                                              hPrint handle $ M.toList wpm
-                                              hPrint handle $ S.toList ws)
+                                              hPrint handle wpm
+                                              hPrint handle ws)
 
 readDB :: FilePath -> IO Database
 readDB path = withFile path ReadMode (\handle -> do
                                      wpm <- hGetLine handle
                                      ws <- hGetLine handle
-                                     return (M.fromList $ read wpm, S.fromList $ read ws))
+                                     return (read wpm, read ws))
 
 checkDB :: FilePath -> IO Database
 checkDB path = do
