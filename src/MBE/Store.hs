@@ -3,9 +3,9 @@ module MBE.Store
     ) where
 
 import Data.List
-import MDB.PMap
-import qualified Data.ByteString.Lazy as B
-import qualified Data.ByteString.Lazy.Char8 as C
+import MDB.PHashMap
+import qualified Data.ByteString as B
+import qualified Data.ByteString.Char8 as C
 import qualified Data.Word as W
 
 punctuation :: B.ByteString
