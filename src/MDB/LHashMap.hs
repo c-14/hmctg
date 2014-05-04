@@ -17,16 +17,13 @@ type PDatabase = H.HashMap Word WPPHMap
 importDB :: FilePath -> IO PDatabase
 importDB path = do
         db <- checkDB path
-        return (calcProbability (mapCountConv db))
+        return (calcProbability db)
 
 pWriteDB :: FilePath -> PDatabase -> IO ()
 pWriteDB path db = withFile path WriteMode (\handle ->
                                         C.hPutStr handle . C.pack . show $ H.toList wpm)
                                         where
                                             wpm = H.map H.toList db
-
-mapCountConv :: Database -> PDatabase
-mapCountConv = H.map (H.map fromIntegral)
 
 calcProbability :: PDatabase -> PDatabase
 calcProbability = H.map probGet

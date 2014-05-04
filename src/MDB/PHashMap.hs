@@ -14,7 +14,7 @@ import qualified Data.HashMap.Strict as H
 import System.IO
 import System.Directory
 
-type Count = Int
+type Count = Float
 type Word = B.ByteString
 type WordPair = (Word, Word)
 type WPHMap = H.HashMap Word Count
