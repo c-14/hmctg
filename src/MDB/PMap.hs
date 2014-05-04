@@ -13,11 +13,13 @@ module MDB.PMap
 
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
+import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy.Char8 as C
 import System.IO
 import System.Directory
 
 type Count = Int
-type Word = String
+type Word = B.ByteString
 type WordSet = S.Set Word
 type WordPair = (Word, Word)
 type WPMap = M.Map WordPair Count
@@ -25,14 +27,14 @@ type Database = (WPMap, WordSet)
 
 writeDB :: FilePath -> Database -> IO ()
 writeDB path (wpm,ws) = withFile path WriteMode (\handle -> do
-                                              hPrint handle wpm
-                                              hPrint handle ws)
+                                              C.hPutStrLn handle . C.pack $ show wpm
+                                              C.hPutStrLn handle . C.pack $ show ws)
 
 readDB :: FilePath -> IO Database
-readDB path = withFile path ReadMode (\handle -> do
-                                     wpm <- hGetLine handle
-                                     ws <- hGetLine handle
-                                     return (read wpm, read ws))
+readDB path = do
+        file <- B.readFile path
+        let line = C.lines file
+        return (read . C.unpack $ head line, read . C.unpack $ last line)
 
 checkDB :: FilePath -> IO Database
 checkDB path = do
@@ -43,11 +45,11 @@ checkDB path = do
 
 createDB :: FilePath -> IO Database
 createDB path = withFile path WriteMode (\handle -> do
-                                   hPrint handle $ M.toList wpp
-                                   hPrint handle $ S.toList w
+                                   C.hPutStrLn handle . C.pack $ show wpp
+                                   C.hPutStrLn handle . C.pack $ show w
                                    return (wpp, w))
-        where wpp = M.singleton ("^","$") 1
-              w   = S.fromList ["^","$"]
+        where wpp = M.singleton (C.singleton '^',C.singleton '$') 1
+              w   = S.fromList [C.singleton '^',C.singleton '$']
 
 updateDB :: WordPair -> Database -> Database
 updateDB wp (wpm,ws) = (M.alter wpMapInsert wp wpm, wsInsert wp ws)

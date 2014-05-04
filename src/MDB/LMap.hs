@@ -1,5 +1,6 @@
 module MDB.LMap
     ( importDB
+    , PDatabase
     ) where
 
 import qualified Data.Map as M
@@ -18,7 +19,7 @@ importDB path = do
         return (pList,ws)
 
 makeProbability :: WPPMap -> WordSet -> WPPMap
-makeProbability = S.foldl calcProbability
+makeProbability = S.foldl' calcProbability
 
 mapCountConv :: WPMap -> WPPMap
 mapCountConv = M.map fromIntegral
