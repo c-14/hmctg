@@ -15,18 +15,23 @@ eol = C.singleton '$'
 sol = C.singleton '^'
 
 punctuation :: [B.ByteString]
-punctuation = map C.singleton [',','.',';','\t','!','?','$']
+punctuation = map C.singleton [',','.',';','!','?','$']
 
 notPunctuation :: B.ByteString -> Bool
 notPunctuation = flip notElem punctuation
 
-
-recChain :: FilePath -> StdGen -> IO B.ByteString
-recChain path g = do
+recIOChain :: FilePath -> StdGen -> IO B.ByteString
+recIOChain path g = do
         db <- importDB path
         let wList = listFunc g db []
         let rList = reverse wList
         return (foldl B.append B.empty rList)
+
+recChain :: PDatabase -> StdGen -> B.ByteString
+recChain db g = foldl B.append B.empty rList
+    where
+        rList = reverse wList
+        wList = listFunc g db []
 
 listFunc :: StdGen -> PDatabase -> [B.ByteString] -> [B.ByteString]
 listFunc g db l = if null l then listFunc g2 db fstList else eolChck

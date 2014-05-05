@@ -9,7 +9,7 @@ import qualified Data.ByteString.Char8 as C
 import qualified Data.Word as W
 
 punctuation :: B.ByteString
-punctuation = C.pack ",.;\t!? "
+punctuation = C.pack ",.;!? "
 
 noPunctuation :: W.Word8 -> Bool
 noPunctuation = flip B.notElem punctuation
