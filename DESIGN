@@ -3,23 +3,20 @@ Haskell Markov Chain Text Generator [Fancy Name Required]
 
 Basic Design:
 	Spelling counts
-	Punktuation marks (;,.:) are not considered part of a word. (Should they be?) (In any case, periods will never be considered part of a word.) --- haha maybe they will...
-	Option a: Markov chain always outputs n "sentence[s]" that are independent of each other (ie n string[s] terminated with a period) [Periods are not considered part of the word.]
-	Option b: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '\0') [Periods are considered part of the word.]
-	Option c: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '.') [Periods are not considered part of the word.] **
+	Punktuation marks (;,.:) are not considered part of a word.
+	Option c: Markov chain itself decides when it should stop (ie when the next word in the markov chain is '$' the eol character.)
 
 Persistent Database:
-	Data.Map with key (String, String) and value v where (String, _) is source string i and (_, String) is possible destination string j and v is number of times j came after i
-	Row i = 0 is the empy string "" and represents the beginning of a sentence.
-	List of All stored strings.
-	Read from file using Parsec. Standard write.
+	Data.HashMap mapping from ByteString to Data.HashMap with the possible successor strings and their count.
 
 In memory Database:
-	Data.Map like the one stored to file except that all the values are converted to percentages.
-	List of All stored strings.
+	Data.HashMap mapping from ByteString to Probability.Distribution containing possible successor strings and their probability.
 
 Executional Design:
-	Two separate binaries.
-	Binary 0: creates and updates persistent database[s]
-	Binary 1: Generates Markov Text Chains using an already existing persistent database
-	Eventually 3rd binary for manual viewing and editing of database.
+	Library:
+		MBE.Store handles insertion of a ByteString into the persistent database.
+		MBE.Markov reads from the persistent database, generates the in memory database and prints out a Markov Chain. (If you want more than 1 Markov chain, it's more efficient to import MDB.LHashMap importDB there and then pass that to recChain rather than using recIOChain).
+	Binary: (Currently not implemented)
+		Binary 0: creates and updates persistent database[s]
+		Binary 1: Generates Markov Text Chains using an already existing persistent database
+		Eventual 3rd binary for manual viewing and editing of database.
