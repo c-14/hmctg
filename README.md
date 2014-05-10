@@ -12,5 +12,4 @@ stack for databases \<5MiB and doesn't work well with databases >5MiB.
 Current Status:
 
 	Release - Alpha
-	
 	Bugs - Probably
