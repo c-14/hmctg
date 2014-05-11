@@ -16,7 +16,7 @@ Executional Design:
 	Library:
 		MBE.Store handles insertion of a ByteString into the persistent database.
 		MBE.Markov reads from the persistent database, generates the in memory database and prints out a Markov Chain. (If you want more than 1 Markov chain, it's more efficient to import MDB.LHashMap importDB there and then pass that to recChain rather than using recIOChain).
-	Binary: (Currently not implemented)
-		Binary 0: creates and updates persistent database[s]
-		Binary 1: Generates Markov Text Chains using an already existing persistent database
-		Eventual 3rd binary for manual viewing and editing of database.
+	Binary:
+		addFiletoDB: creates and updates persistent database[s]
+		hmctg: Generates Markov Text Chains using an already existing persistent database
+		Eventual 3rd binary for manual viewing and editing of database. (Not yet implemented)

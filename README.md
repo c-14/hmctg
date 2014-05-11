@@ -13,3 +13,4 @@ Current Status:
 
 	Release - Alpha
 	Bugs - Probably
+	Binaries - We have them
