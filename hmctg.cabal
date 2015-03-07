@@ -2,14 +2,14 @@
 --  see http://haskell.org/cabal/users-guide/
 
 name:                hmctg
-version:             0.1.1.0
+version:             0.1.2.0
 synopsis:            A Markov Chain Text Generator in Haskell
 -- description:         
 homepage:            http://github.com/c-14/hmctg
 license:             BSD3
 license-file:        LICENSE
 author:              Simon Thelen
-maintainer:          c-14git.shadowmurderer@spamgourmet.com
+maintainer:          git@c-14.de
 -- copyright:           
 category:            Text
 build-type:          Simple
@@ -28,9 +28,10 @@ executable hmctg
                      bytestring,
                      directory,
                      random,
-                     unordered-containers,
                      probability,
                      mtl,
+                     HDBC,
+                     HDBC-sqlite3,
                      hmctg
 
 executable addFiletoDB
@@ -41,9 +42,10 @@ executable addFiletoDB
                      bytestring,
                      directory,
                      random,
-                     unordered-containers,
                      probability,
                      mtl,
+                     HDBC,
+                     HDBC-sqlite3,
                      hmctg
 
 library
@@ -56,5 +58,6 @@ library
                      bytestring,
                      directory,
                      random,
-                     unordered-containers,
-                     probability
+                     probability,
+                     HDBC,
+                     HDBC-sqlite3
