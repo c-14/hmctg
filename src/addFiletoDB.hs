@@ -1,4 +1,4 @@
-import qualified Data.ByteString as B
+import qualified Data.ByteString.Lazy as B
 import Control.Monad.Reader (when)
 import System.Console.GetOpt
 import System.Environment
