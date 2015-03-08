@@ -29,22 +29,23 @@ store path s = do
         insertSQL <- prepare db "INSERT OR IGNORE INTO WordPairs (start, next, count, prob) VALUES ( ?, ?, 0, 0.0)"
         icountSQL <- prepare db "UPDATE WordPairs SET count = count + 1 WHERE start = ? AND next = ?"
         iprobaSQL <- prepare db "UPDATE WordPairs SET prob = CAST(count AS REAL) / (SELECT SUM(count) FROM WordPairs WHERE start = ?) WHERE start = ?"
-        existsSQL <- prepare db "SELECT count from WordPairs WHERE start = ? AND next = ?"
-        -- val <- filterM (notInDB existsSQL) (map wordPairToSql $ head wordPairList)
-        -- print val
-        mapM_ (flip (>>) (commit db) . (flip (>>=) (sqlExec . executeMany insertSQL) . (filterM $ sqlExec . notInDB existsSQL) . map wordPairToSql)) wordPairList
-        -- commit db
-        -- executeMany icountSQL $ map wordPairToSql wordPairList
-        -- commit db
-        -- executeMany iprobaSQL $ map (replicate 2 . toSql . fst) insertList
-        -- commit db
-        -- disconnect db
+        existsSQL <- prepare db "SELECT count FROM WordPairs WHERE start = ? AND next = ?"
+        mapM_ (flip (>>) (commit db) . ((insertOrUpdate existsSQL insertSQL icountSQL) . map wordPairToSql)) wordPairList
+        starts <- quickQuery db "SELECT DISTINCT start FROM WordPairs" []
+        executeMany iprobaSQL $ map (replicate 2 . head) starts
+        commit db
+        disconnect db
         where
-            -- insertList = map (filterM $ notInDB existsSQL) wordPairList
-            wordPairList = semiFlatten $ pairize splitList
+            wordPairList = semiFlatten $ pairize splitList :: [[WordPair]]
             pairize = map $ createPairs []
             splitList = map (delSpaces . groupByPunctuation) lineList
             lineList  = C.lines s
+
+insertOrUpdate :: Statement -> Statement -> Statement -> [[SqlValue]] -> IO ()
+insertOrUpdate e i u l = sequence_ $ map sqlExec $ (executeMany i =<< newItems) : (executeMany u =<< updItems) : []
+                        where
+                            newItems = filterM (sqlExec . notInDB e) $ nub l :: IO [[SqlValue]]
+                            updItems = return . (\\) l =<< newItems
 
 notInDB :: Statement -> [SqlValue] -> IO Bool
 notInDB s wp = do
@@ -57,7 +58,7 @@ semiFlatten list
             | null list = []
             | otherwise = (:) (concat . fst $ split) $ semiFlatten $ snd split
             where
-                split = splitAt 5 list
+                split = splitAt 100 list
 
 wordPairToSql :: WordPair -> [SqlValue]
 wordPairToSql wp = map toSql [fst wp, snd wp]
