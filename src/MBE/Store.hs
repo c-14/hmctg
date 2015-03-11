@@ -11,6 +11,8 @@ import qualified Data.Word as W
 
 import MDB.PDB
 
+blocksize = 10000
+
 punctuation :: B.ByteString
 punctuation = C.pack ",.;!? "
 
@@ -58,7 +60,7 @@ semiFlatten list
             | null list = []
             | otherwise = (:) (concat . fst $ split) $ semiFlatten $ snd split
             where
-                split = splitAt 100 list
+                split = splitAt blocksize list
 
 wordPairToSql :: WordPair -> [SqlValue]
 wordPairToSql wp = map toSql [fst wp, snd wp]

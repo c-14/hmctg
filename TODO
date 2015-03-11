@@ -1,0 +1,5 @@
+Add modified algorithm where current state always equals 2 words
+
+Thread insert/update operation across semiFlattened blocks each thread working with a temporary table, then merge the tables before calculating probabilities.
+
+Test if it might be faster to store the total occurences of first in each row, and then immediately calculate probability on merging per row instead of afterwards in sequence.
